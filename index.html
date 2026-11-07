@@ -1,1 +1,51 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101b15">
+<title>FITTRACK</title>
+<style>
+body{margin:0;background:#101b15;color:white;font-family:Arial,sans-serif;padding:22px}
+h1{color:#83e6a5;letter-spacing:2px}
+.card{background:#1c3025;padding:18px;border-radius:16px;margin:14px 0}
+input,select,button{box-sizing:border-box;width:100%;padding:13px;margin:7px 0;border-radius:9px;border:1px solid #46624f;background:#14231a;color:white;font-size:16px}
+button{background:#83e6a5;color:#102018;font-weight:bold;border:0}
+.entry{padding:12px;border-bottom:1px solid #46624f}
+small{color:#a9c4b1}
+</style>
+</head>
+<body>
+<h1>FITTRACK 🏋️</h1>
+<p>Your training. Your progress.</p>
+<div class="card"><h2>MY PROGRESS</h2><p id="stats">0 exercises logged</p></div>
+<div class="card">
+<h2>Log workout</h2>
+<input type="date" id="date">
+<select id="exercise">
+<option>Bench Press</option><option>Squat</option><option>Deadlift</option><option>Pull-ups</option><option>Lat Pulldown</option><option>Shoulder Press</option><option>Bicep Curl</option><option>Tricep Pushdown</option><option>Leg Press</option><option>Barbell Row</option><option>Lunges</option><option>Plank</option><option>Push-ups</option>
+</select>
+<input type="number" id="sets" placeholder="Sets" value="3" min="1">
+<input type="number" id="reps" placeholder="Reps" value="10" min="1">
+<input type="number" id="weight" placeholder="Weight (kg)" value="40" min="0">
+<button onclick="add()">SAVE EXERCISE</button>
+</div>
+<div class="card"><h2>TRAINING HISTORY</h2><div id="history">No workouts yet.</div></div>
+<script>
+let logs=JSON.parse(localStorage.getItem('fittrack')||'[]');
+document.getElementById('date').value=new Date().toISOString().slice(0,10);
+function render(){
+document.getElementById('stats').textContent=logs.length+' exercises logged · '+logs.reduce((a,x)=>a+x.s,0)+' sets';
+document.getElementById('history').innerHTML=logs.length?logs.slice().reverse().map(x=>'<div class="entry"><b>'+x.e+'</b><br><small>'+x.d+' · '+x.s+' sets × '+x.r+' reps · '+x.w+' kg</small></div>').join(''):'No workouts yet.';
+}
+function add(){
+let s=+document.getElementById('sets').value,r=+document.getElementById('reps').value,w=+document.getElementById('weight').value;
+if(!s||!r||w<0){alert('Enter valid workout details');return;}
+logs.push({d:document.getElementById('date').value,e:document.getElementById('exercise').value,s,r,w});
+localStorage.setItem('fittrack',JSON.stringify(logs));render();alert('Workout saved!');
+}
+render();
+</script>
+</body>
+</html>
